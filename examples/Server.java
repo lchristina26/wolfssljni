@@ -1,15 +1,15 @@
 /* Server.java
  *
- * Copyright (C) 2006-2014 wolfSSL Inc.
+ * Copyright (C) 2006-2015 wolfSSL Inc.
  *
- * This file is part of CyaSSL.
+ * This file is part of wolfSSL.
  *
- * CyaSSL is free software; you can redistribute it and/or modify
+ * wolfSSL is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  *
- * CyaSSL is distributed in the hope that it will be useful,
+ * wolfSSL is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -34,7 +34,7 @@ import com.wolfssl.WolfSSLIOSendCallback;
 import com.wolfssl.WolfSSLIORecvCallback;
 
 public class Server {
-    
+
     public static Charset charset = Charset.forName("UTF-8");
     public static CharsetEncoder encoder = charset.newEncoder();
 
@@ -74,7 +74,7 @@ public class Server {
         String caCert     = "../certs/client-cert.pem";
         String crlPemDir  = "../certs/crl";
 
-        /* server info */ 
+        /* server info */
         int port    =  11111;
 
         /* pull in command line options from user */
@@ -97,7 +97,7 @@ public class Server {
                 if (sslVersion < 0 || sslVersion > 3) {
                     printUsage();
                 }
-    
+
             } else if (arg.equals("-l")) {
                 if (args.length < i+2)
                     printUsage();
@@ -147,7 +147,7 @@ public class Server {
 
             } else if (arg.equals("-m")) {
                 crlDirMonitor = 1;
-            
+
             } else {
                 printUsage();
             }
@@ -219,7 +219,7 @@ public class Server {
                 System.exit(1);
             }
 
-                
+
             /* set verify callback */
             if (verifyPeer == 0) {
                 sslCtx.setVerify(WolfSSL.SSL_VERIFY_NONE, null);
@@ -241,11 +241,11 @@ public class Server {
             /* set OCSP options, override URL */
             if (useOcsp == 1) {
 
-                long ocspOptions = WolfSSL.CYASSL_OCSP_NO_NONCE;
+                long ocspOptions = WolfSSL.WOLFSSL_OCSP_NO_NONCE;
 
                 if (ocspUrl != null) {
                     ocspOptions = ocspOptions |
-                                  WolfSSL.CYASSL_OCSP_URL_OVERRIDE;
+                                  WolfSSL.WOLFSSL_OCSP_URL_OVERRIDE;
                 }
 
                 if (ocspUrl != null) {
@@ -285,7 +285,7 @@ public class Server {
                     d_serverSocket.setSoTimeout(0);
                     d_serverSocket.receive(dp);
                     d_serverSocket.connect(dp.getAddress(), dp.getPort());
-                    System.out.println("client connection received from " + 
+                    System.out.println("client connection received from " +
                             dp.getAddress() + " at port " + dp.getPort() +
                             "\n");
                 } else {
@@ -313,8 +313,8 @@ public class Server {
                 }
                 if (crlDirMonitor == 1) {
                     ret = ssl.loadCRL(crlPemDir, WolfSSL.SSL_FILETYPE_PEM,
-                            (WolfSSL.CYASSL_CRL_MONITOR |
-                            WolfSSL.CYASSL_CRL_START_MON));
+                            (WolfSSL.WOLFSSL_CRL_MONITOR |
+                            WolfSSL.WOLFSSL_CRL_START_MON));
                     if (ret == WolfSSL.MONITOR_RUNNING_E) {
                         System.out.println("CRL monitor already running, " +
                                 "continuing");
@@ -350,8 +350,8 @@ public class Server {
                     ssl.setIOReadCtx(ioctx);
                     ssl.setIOWriteCtx(ioctx);
                     System.out.println("Registered I/O callbacks");
-                   
-                    /* register DTLS cookie generation callback */ 
+
+                    /* register DTLS cookie generation callback */
                     MyGenCookieCallback gccb = new MyGenCookieCallback();
                     MyGenCookieCtx gctx = new MyGenCookieCtx(
                             hostAddress, port);
@@ -360,8 +360,8 @@ public class Server {
                     System.out.println("Registered DTLS cookie callback");
 
                 } else {
-                    /* if not using DTLS or I/O callbacks, pass Socket 
-                     * fd to CyaSSL */
+                    /* if not using DTLS or I/O callbacks, pass Socket
+                     * fd to wolfSSL */
                      ret = ssl.setFd(clientSocket);
 
                     if (ret != WolfSSL.SSL_SUCCESS) {
@@ -373,7 +373,7 @@ public class Server {
                 if (useAtomic == 1) {
                     /* register atomic record layer callbacks */
                     MyMacEncryptCallback mecb = new MyMacEncryptCallback();
-                    MyDecryptVerifyCallback dvcb = 
+                    MyDecryptVerifyCallback dvcb =
                         new MyDecryptVerifyCallback();
                     MyAtomicEncCtx encCtx = new MyAtomicEncCtx();
                     MyAtomicDecCtx decCtx = new MyAtomicDecCtx();
@@ -385,7 +385,7 @@ public class Server {
 
                 if (pkCallbacks == 1) {
                     /* register public key callbacks */
-                    
+
                     /* ECC */
                     MyEccSignCallback eccSign = new MyEccSignCallback();
                     MyEccVerifyCallback eccVerify = new MyEccVerifyCallback();
@@ -419,7 +419,7 @@ public class Server {
                 if (ret != WolfSSL.SSL_SUCCESS) {
                     int err = ssl.getError(ret);
                     String errString = sslLib.getErrorString(err);
-                    System.out.println("CyaSSL_accept failed. err = " + err +
+                    System.out.println("wolfSSL_accept failed. err = " + err +
                             ", " + errString);
                     System.exit(1);
                 }
@@ -435,7 +435,7 @@ public class Server {
                 } else {
                     System.out.println("read failed");
                 }
-                    
+
                 ret = ssl.write(msg.getBytes(), msg.length());
                 if (ret != msg.length()) {
                     System.out.println("ssl.write() failed");
@@ -470,7 +470,7 @@ public class Server {
         if (peerCrtPtr != 0) {
 
             System.out.println("issuer : " + ssl.getPeerX509Issuer(peerCrtPtr));
-            System.out.println("subject : " + 
+            System.out.println("subject : " +
                     ssl.getPeerX509Subject(peerCrtPtr));
 
             while( (altname = ssl.getPeerX509AltName(peerCrtPtr)) != null)
@@ -510,5 +510,5 @@ public class Server {
         System.exit(1);
     }
 
-} /* end Client */
+} /* end Server */
 
