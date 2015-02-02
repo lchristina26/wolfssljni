@@ -1,15 +1,15 @@
 /* WolfSSLSession.java
  *
- * Copyright (C) 2006-2014 wolfSSL Inc.
+ * Copyright (C) 2006-2015 wolfSSL Inc.
  *
- * This file is part of CyaSSL.
+ * This file is part of wolfSSL.
  *
- * CyaSSL is free software; you can redistribute it and/or modify
+ * wolfSSL is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  *
- * CyaSSL is distributed in the hope that it will be useful,
+ * wolfSSL is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -36,7 +36,7 @@ import com.wolfssl.WolfSSLException;
  */
 public class WolfSSLSession {
 
-    private long sslPtr;    /* internal pointer to native CYASSL object */
+    private long sslPtr;    /* internal pointer to native WOLFSSL object */
 
     private Object ioReadCtx;
     private Object ioWriteCtx;
@@ -52,13 +52,13 @@ public class WolfSSLSession {
 
     /* reference to the associated WolfSSLContext */
     private WolfSSLContext ctx;
-    
+
     /* is this context active, or has it been freed? */
     private boolean active = false;
 
     /**
      * Creates a new SSL/TLS session.
-     * 
+     *
      * @param  ctx   WolfSSLContext object used to create SSL session.
      *
      * @throws com.wolfssl.WolfSSLException if session object creation
@@ -70,13 +70,13 @@ public class WolfSSLSession {
             throw new WolfSSLException("Failed to create SSL Object");
         } else {
             this.active = true;
-            
+
             /* save context reference for I/O callbacks from JNI */
             this.ctx = ctx;
         }
     }
 
-    /* ------------------- private/protected methods -------------------- */ 
+    /* ------------------- private/protected methods -------------------- */
 
     long getSessionPtr() {
         return sslPtr;
@@ -104,7 +104,7 @@ public class WolfSSLSession {
     Object getMacEncryptCtx() {
         return this.macEncryptCtx;
     }
-    
+
     Object getDecryptVerifyCtx() {
         return this.decryptVerifyCtx;
     }
@@ -182,7 +182,7 @@ public class WolfSSLSession {
     private native int enableCRL(long ssl, int options);
     private native int disableCRL(long ssl);
     private native int loadCRL(long ssl, String path, int type, int monitor);
-    private native int setCRLCb(long ssl, WolfSSLMissingCRLCallback cb);    
+    private native int setCRLCb(long ssl, WolfSSLMissingCRLCallback cb);
     private native String cipherGetName(long ssl);
     private native byte[] getMacSecret(long ssl, int verify);
     private native byte[] getClientWriteKey(long ssl);
@@ -216,7 +216,7 @@ public class WolfSSLSession {
      * This file is provided by the <b>file</b> parameter. The <b>format</b>
      * paramenter specifies the format type of the file - either
      * <b>SSL_FILETYPE_ASN1</b> or <b>SSL_FILETYPE_PEM</b>. Please see the
-     * CyaSSL examples for proper usage.
+     * wolfSSL examples for proper usage.
      *
      * @param file      a file containing the certificate to be loaded into
      *                  the wolfSSL SSL session object.
@@ -224,9 +224,9 @@ public class WolfSSLSession {
      *                  </code>. Possible options are <b>SSL_FILETYPE_ASN1</b>,
      *                  for DER-encoded certificates, or <b>SSL_FILETYPE_PEM
      *                  </b> for PEM-encoded certificates.
-     * @return          <code>SSL_SUCCESS</code> upon success, 
+     * @return          <code>SSL_SUCCESS</code> upon success,
      *                  <code>SSL_BAD_FILE</code> upon bad input file,
-     *                  otherwise <code>SSL_FAILURE</code>. Possible failure 
+     *                  otherwise <code>SSL_FAILURE</code>. Possible failure
      *                  causes may be that the file is in the wrong format, the
      *                  format argument was given incorrectly, the file
      *                  doesn't exist, can't be read, or is corrupted,
@@ -243,7 +243,7 @@ public class WolfSSLSession {
      * This file is provided by the <b>file</b> parameter. The <b>format</b>
      * paramenter specifies the format type of the file - either
      * <b>SSL_FILETYPE_ASN1</b> or <b>SSL_FILETYPE_PEM</b>. Please see the
-     * CyaSSL examples for proper usage.
+     * wolfSSL examples for proper usage.
      *
      * @param file      a file containing the private key to be loaded into
      *                  the wolfSSL SSL session.
@@ -251,7 +251,7 @@ public class WolfSSLSession {
      *                  </code>. Possible options are <b>SSL_FILETYPE_ASN1</b>,
      *                  for a DER-encoded key, or <b>SSL_FILETYPE_PEM
      *                  </b> for a PEM-encoded key.
-     * @return          <code>SSL_SUCCESS</code> upon success, 
+     * @return          <code>SSL_SUCCESS</code> upon success,
      *                  <code>SSL_BAD_FILE</code> upon bad input file, otherwise
      *                  <code>SSL_FAILURE</code>. Possible failure causes
      *                  may be that the file is in the wrong format, the
@@ -319,7 +319,7 @@ public class WolfSSLSession {
 
     /**
      * Informs wolfSSL session that the underlying I/O is non-blocking.
-     * After an application creates a SSL session (native CYASSL object),
+     * After an application creates a SSL session (native WOLFSSL object),
      * if it will be used with a non-blocking socket, this method should
      * be called. This lets the SSL session know that receiving EWOULDBLOCK
      * means that the recvfrom call would block rather than that it timed out.
@@ -376,12 +376,12 @@ public class WolfSSLSession {
      * to <code>getError</code> will yield either <b>SSL_ERROR_WANT_READ</b> or
      * <b>SSL_ERROR_WANT_WRITE</b>. The calling process must then repeat the
      * call to <code>connect()</code> when the underlying I/O is ready and
-     * CyaSSL will pick up where it left off.
+     * wolfSSL will pick up where it left off.
      * <p>
      * If the underlying I/O is blocking, <code>connect()</code> will only
      * return once the handshake has been finished or an error occurred.
      * <p>
-     * CyaSSL takes a different approach to certificate verification than
+     * wolfSSL takes a different approach to certificate verification than
      * OpenSSL does. The default policy for clients is to verify the server,
      * meaning that if the application doesn't load CA certificates to verify
      * the server, it will get a connect error, "unable to verify" (-155). If
@@ -423,11 +423,11 @@ public class WolfSSLSession {
      * @param length    size, in bytes, of data to send to the peer
      * @return          the number of bytes written upon success. <code>0
      *                  </code>will be returned upon failure. <code>
-     *                  SSL_FATAL_ERROR</code>upon failure when either an 
-     *                  error occurred or, when using non-blocking sockets, 
-     *                  the <b>SSL_ERROR_WANT_READ</b> or 
+     *                  SSL_FATAL_ERROR</code>upon failure when either an
+     *                  error occurred or, when using non-blocking sockets,
+     *                  the <b>SSL_ERROR_WANT_READ</b> or
      *                  <b>SSL_ERROR_WANT_WRITE</b> error was received and the
-     *                  application needs to call <code>write()</code> again. 
+     *                  application needs to call <code>write()</code> again.
      *                  <code>BAD_FUNC_ARC</code> when bad arguments are used.
      *                  Use <code>getError</code> to get a specific error code.
      */
@@ -444,7 +444,7 @@ public class WolfSSLSession {
      * if the handshake has not already been performed yet by <code>connect()
      * </code> or <code>accept()</code>.
      * <p>
-     * The SSL/TLS protocol uses SSL records which have a maximum size of 
+     * The SSL/TLS protocol uses SSL records which have a maximum size of
      * 16kB. As such, wolfSSL needs to read an entire SSL record internally
      * before it is able to process and decrypt the record. Because of this,
      * a call to <code>read()</code> will only be able to return the
@@ -461,10 +461,10 @@ public class WolfSSLSession {
      *              by either a clean (close notify alert) shutdown or just
      *              that the peer closed the connection. <code>
      *              SSL_FATAL_ERROR</code> upon failure when either an error
-     *              occurred or, when using non-blocking sockets, the 
-     *              <b>SSL_ERROR_WANT_READ</b> or <b>SSL_ERROR_WANT_WRITE</b> 
-     *              error was received and the application needs to call 
-     *              <code>read()</code> again. Use <code>getError</code> to 
+     *              occurred or, when using non-blocking sockets, the
+     *              <b>SSL_ERROR_WANT_READ</b> or <b>SSL_ERROR_WANT_WRITE</b>
+     *              error was received and the application needs to call
+     *              <code>read()</code> again. Use <code>getError</code> to
      *              get a specific error code.
      *              <code>BAD_FUNC_ARC</code> when bad arguments are used.
      */
@@ -483,7 +483,7 @@ public class WolfSSLSession {
      * <code>accept()</code> to continue the handshake. In this case, a call to
      * <code>getError()</code> will yield either <b>SSL_ERROR_WANT_READ</b> or
      * <b>SSL_ERROR_WANT_WRITE</b>. The calling process must then repeat the
-     * call to <code>accept()</code> when data is available to be read and 
+     * call to <code>accept()</code> when data is available to be read and
      * wolfSSL will pick up where it left off. When using a non-blocking
      * socket, nothing needs to be done, but <code>select()</code> can be used
      * to check for the required condition.
@@ -536,7 +536,7 @@ public class WolfSSLSession {
      * or <b>SSL_ERROR_WANT_WRITE</b>. The calling process must then repeat
      * the call to <code>shutdownSSL()</code> when the underlying I/O is ready.
      *
-     * @return      <code>SSL_SUCCESS</code> on success, 
+     * @return      <code>SSL_SUCCESS</code> on success,
      *              <code>SSL_FATAL_ERROR</code> upon failure. Call <code>
      *              getError()</code> for a more specific error code.
      * @see         #freeSSL(long)
@@ -578,7 +578,7 @@ public class WolfSSLSession {
      * setSession()</code>. At this point, the application may call <code>
      * connect()</code> and wolfSSL will try to resume the session.
      *
-     * @param session   pointer to the native CYASSL_SESSION structure used
+     * @param session   pointer to the native WOLFSSL_SESSION structure used
      *                  to set the session for the SSL session object.
      * @return          <code>SSL_SUCCESS</code> upon successfully setting
      *                  the session. <code>SSL_FAILURE</code> will be
@@ -593,7 +593,7 @@ public class WolfSSLSession {
 
     /**
      * Returns a pointer to the current session used in the given SSL object.
-     * The native CYASSL_SESSION pointed to contains all the necessary
+     * The native WOLFSSL_SESSION pointed to contains all the necessary
      * information required to perform a session resumption and reestablishment
      * the connection without a new handshake.
      * <p>
@@ -617,9 +617,9 @@ public class WolfSSLSession {
 
     /**
      * Sets the cipher suite list for a given SSL session.
-     * The ciphers in the list should be sorted in order of preference from 
-     * highest to lowest. Each call to <code>setCipherList()</code> resets 
-     * the cipher suite list for the specific SSL session to the provided list 
+     * The ciphers in the list should be sorted in order of preference from
+     * highest to lowest. Each call to <code>setCipherList()</code> resets
+     * the cipher suite list for the specific SSL session to the provided list
      * each time time the method is called.
      * <p>
      * The cipher suite list, <b>list</b>, is a null-terminated text String,
@@ -641,7 +641,7 @@ public class WolfSSLSession {
         return setCipherList(getSessionPtr(), list);
     }
 
-    
+
     /* ---------------- Nonblocking DTLS helper functions  -------------- */
 
     /**
@@ -667,7 +667,7 @@ public class WolfSSLSession {
      * Performs the actions needed to retry the last retransmit, including
      * adjusting the timeout value.
      * When using non-blocking sockets with DTLS, this method should be
-     * called on the SSL session when the controlling code thinks the 
+     * called on the SSL session when the controlling code thinks the
      * transmission has timed out.
      *
      * @return      <code>SSL_SUCCESS</code> upon success. <code>
@@ -746,11 +746,11 @@ public class WolfSSLSession {
     }
 
     /**
-     * Gets the native (long) CYASSL_X509 pointer to the peer's certificate.
+     * Gets the native (long) WOLFSSL_X509 pointer to the peer's certificate.
      * This can be used to retrieve further information about the peer's
      * certificate (issuer, subject, alt name, etc.)
      *
-     * @return      (long) CYASSL_X509 pointer to the peer's certificate.
+     * @return      (long) WOLFSSL_X509 pointer to the peer's certificate.
      *
      * @see         WolfSSLSession#getPeerX509Issuer(long)
      * @see         WolfSSLSession#getPeerX509Subject(long)
@@ -764,7 +764,7 @@ public class WolfSSLSession {
     /**
      * Gets the peer X509 certificate's issuer information.
      *
-     * @param x509  pointer (long) to native CYASSL_X509 structure, obtained
+     * @param x509  pointer (long) to native WOLFSSL_X509 structure, obtained
      *              from getPeerCertificate().
      * @return      String representation of the peer's issuer information
      * @see         WolfSSLSession#getPeerCertificate()
@@ -779,7 +779,7 @@ public class WolfSSLSession {
     /**
      * Gets the peer X509 certificate's subject information.
      *
-     * @param x509  pointer (long) to native CYASSL_X509 structure, obtained
+     * @param x509  pointer (long) to native WOLFSSL_X509 structure, obtained
      *              from getPeerCertificate().
      * @return      String representation of the peer's subject information
      * @see         WolfSSLSession#getPeerCertificate()
@@ -797,7 +797,7 @@ public class WolfSSLSession {
      * from the peer cert. If no more altnames are available, <b>null</b>
      * will be returned.
      *
-     * @param x509  pointer (long) to native CYASSL_X509 structure, obtained
+     * @param x509  pointer (long) to native WOLFSSL_X509 structure, obtained
      *              from getPeerCertificate().
      * @return      String representation of the peer's subject information
      * @see         WolfSSLSession#getPeerCertificate()
@@ -824,12 +824,12 @@ public class WolfSSLSession {
     }
 
     /**
-     * Returns a pointer to the native CYASSL_CIPHER object being used
+     * Returns a pointer to the native WOLFSSL_CIPHER object being used
      * in with the SSL session.
      * This pointer can be used with the <code>getCipherName()</code> function
      * to get the name of the current cipher suite being used.
      *
-     * @return      pointer (long) to the native CYASSL_CIPHER object
+     * @return      pointer (long) to the native WOLFSSL_CIPHER object
      *              currently used with the SSL session.
      * @see         WolfSSLSession#cipherGetName()
      */
@@ -844,7 +844,7 @@ public class WolfSSLSession {
      * and a verified signature. Calling this function before <code>connect()
      * </code> or <code>accept()</code> will add a domain name check to the
      * list of checks to perform.
-     * 
+     *
      * @param dn    domain name to check against the peer certificate
      *              when received.
      * @return      <code>SSL_SUCCESS</code> on success, <code>SSL_FAILURE
@@ -864,7 +864,7 @@ public class WolfSSLSession {
      * @param gSz   size of <code>g</code>
      * @return      <code>SSL_SUCCESS</code> on success. <code>MEMORY_E
      *              </code> if a memory error was encountered. <code>
-     *              SIDE_ERROR</code> if this function is called on an 
+     *              SIDE_ERROR</code> if this function is called on an
      *              SSL client instead of an SSL server.
      * @see         #accept()
      */
@@ -873,7 +873,7 @@ public class WolfSSLSession {
     }
 
     /**
-     * Sets up the group parameters from the specified file to be used if the 
+     * Sets up the group parameters from the specified file to be used if the
      * server negotiates a cipher suite that uses DHE.
      *
      * @param fname     path to Diffie-Hellman parameter file
@@ -882,10 +882,10 @@ public class WolfSSLSession {
      *                  SSL_FILETYPE_PEM</code>.
      * @return          <code>SSL_SUCCESS</code> on success. <code>MEMORY_E
      *                  </code> if a memory error was encountered. <code>
-     *                  SIDE_ERROR</code> if this function is called on an 
+     *                  SIDE_ERROR</code> if this function is called on an
      *                  SSL client instead of an SSL server, <code>
      *                  SSL_BAD_FILETYPE</code> if the specified format is
-     *                  incorrect, <code>SSL_BAD_FILE</code> if there is a 
+     *                  incorrect, <code>SSL_BAD_FILE</code> if there is a
      *                  problem with the input file.
      * @see             #setTmpDH(byte[], int, byte[], int)
      */
@@ -927,7 +927,7 @@ public class WolfSSLSession {
      * This method behaves like the non-buffered version, only differing
      * in its ability to be called with a buffer as input rather than a file.
      *
-     * @param in        the input buffer containing the private key to be 
+     * @param in        the input buffer containing the private key to be
      *                  loaded
      * @param sz        the size of the input buffer, <b>in</b>
      * @param format    format of the certificate buffer being loaded - either
@@ -971,7 +971,7 @@ public class WolfSSLSession {
      *                  corrupted. <b><code>MEMORY_E</code></b> if an out of
      *                  memory condition occurs, <b><code>ASN_INPUT_E</code></b>
      *                  if Base16 decoding fails on the file,
-     *                  <b><code>BUFFER_E</code></b> if a chain buffer is 
+     *                  <b><code>BUFFER_E</code></b> if a chain buffer is
      *                  bigger than the receiving buffer, and <b><code>
      *                  BAD_FUNC_ARG</code></b> if invalid input parameters
      *                  are given.
@@ -997,7 +997,7 @@ public class WolfSSLSession {
     public int setGroupMessages() {
         return setGroupMessages(getSessionPtr());
     }
-   
+
     /**
      * Registers a context for the SSL session's receive callback method.
      * By default, wolfSSL sets the file descriptor passed to setFd() as
@@ -1014,7 +1014,7 @@ public class WolfSSLSession {
      * @see         #setIOWriteCtx(Object)
      * @see         WolfSSLContext#setIORecv(WolfSSLIORecvCallback)
      * @see         WolfSSLContext#setIOSend(WolfSSLIOSendCallback)
-     */ 
+     */
     public void setIOReadCtx(Object ctx) {
         ioReadCtx = ctx;
         setIOReadCtx(getSessionPtr());
@@ -1063,7 +1063,7 @@ public class WolfSSLSession {
      * Turns on Certificate Revocation List (CRL) checking when
      * verifying certificates.
      * By default, CRL checking is off. <b>options</b> include
-     * CYASSL_CRL_CHECKALL which performs CRL checking on each certificate
+     * WOLFSSL_CRL_CHECKALL which performs CRL checking on each certificate
      * in the chain versus the leaf certificate only (which is default).
      *
      * @param options   options to use when enabling CRL
@@ -1106,7 +1106,7 @@ public class WolfSSLSession {
 
     /**
      * Loads CRL files into wolfSSL from the specified path.
-     * This method loads a list of CRL files into wolfSSL. The files can be 
+     * This method loads a list of CRL files into wolfSSL. The files can be
      * in either PEM or DER format, as specified by the <b>type</b>
      * parameter.
      *
@@ -1114,11 +1114,11 @@ public class WolfSSLSession {
      * @param type      type of files in <b>path</b>, either <code>
      *                  SSL_FILETYPE_PEM</code> or <code>SSL_FILETYPE_ASN1
      *                  </code>.
-     * @param monitor   OR'd list of flags to indicate if wolfSSL should 
+     * @param monitor   OR'd list of flags to indicate if wolfSSL should
      *                  monitor the provided CRL directory for changes.
-     *                  Flag values include <code>CYASSL_CRL_MONITOR</code>
+     *                  Flag values include <code>WOLFSSL_CRL_MONITOR</code>
      *                  to indicate that the directory should be monitored
-     *                  and <code>CYASSL_CRL_START_MON</code> to start the
+     *                  and <code>WOLFSSL_CRL_START_MON</code> to start the
      *                  monitor.
      * @return          <b><code>SSL_SUCCESS</code></b> upon success<br>
      *                  <b><code>SSL_FATAL_ERROR</code></b> if enabling the
@@ -1129,7 +1129,7 @@ public class WolfSSLSession {
      *                  error opening the provided directory<br>
      *                  <b><code>MEMORY_E</code></b> if a memory error
      *                  occurred<br>
-     *                  <b><code>MONITOR_RUNNING_E</code></b> if the CRL 
+     *                  <b><code>MONITOR_RUNNING_E</code></b> if the CRL
      *                  monitor is already running<br>
      *                  <b><code>THREAD_CREATE_E</code></b> if there was an
      *                  error when creating the CRL monitoring thread.
@@ -1162,7 +1162,7 @@ public class WolfSSLSession {
     public int setCRLCb(WolfSSLMissingCRLCallback cb) {
         return setCRLCb(getSessionPtr(), cb);
     }
-    
+
     /**
      * Returns the cipher suite name associated with the WolfSSL session
      * in String format.
@@ -1246,7 +1246,7 @@ public class WolfSSLSession {
     /**
      * Allows retrieval of the key size from the handshake process.
      *
-     * @return  the key size in bytes upon success. 
+     * @return  the key size in bytes upon success.
      *          <b><code>BAD_FUNC_ARG</code></b> for an error state.
      * @see     #getClientWriteKey()
      * @see     #getServerWriteKey()
@@ -1258,8 +1258,8 @@ public class WolfSSLSession {
     /**
      * Allows retrieval of the side of this wolfSSL connection.
      *
-     * @return  <b><code>CYASSL_SERVER_END</code></b> or
-     *          <b><code>CYASSL_CLIENT_END</code></b> depending on the side
+     * @return  <b><code>WOLFSSL_SERVER_END</code></b> or
+     *          <b><code>WOLFSSL_CLIENT_END</code></b> depending on the side
      *          of the wolfSSL session object.
      *          <b><code>BAD_FUNC_ARG</code></b> for an error state.
      * @see     #getClientWriteKey()
@@ -1287,13 +1287,13 @@ public class WolfSSLSession {
      * the handshake.
      *
      * @return  If successful, the call will return one of the following:<br>
-     *          WolfSSL.cyassl_cipher_null<br>
-     *          WolfSSL.cyassl_des<br>
-     *          WolfSSL.cyassl_triple_des<br>
-     *          WolfSSL.cyassl_aes<br>
-     *          WolfSSL.cyassl_aes_gcm<br>
-     *          WolfSSL.cyassl_aes_ccm<br>
-     *          WolfSSL.cyassl_camellia<br>
+     *          WolfSSL.wolfssl_cipher_null<br>
+     *          WolfSSL.wolfssl_des<br>
+     *          WolfSSL.wolfssl_triple_des<br>
+     *          WolfSSL.wolfssl_aes<br>
+     *          WolfSSL.wolfssl_aes_gcm<br>
+     *          WolfSSL.wolfssl_aes_ccm<br>
+     *          WolfSSL.wolfssl_camellia<br>
      *          WolfSSL.hc128<br>
      *          WolfSSL.rabbit<br>
      *          <b><code>BAD_FUNC_ARG</code></b> for an error state.<br>
@@ -1320,7 +1320,7 @@ public class WolfSSLSession {
     /**
      * Allows caller to determine the negotiated aead mac size from the
      * handshake.
-     * For cipher type <b>CYASSL_AEAD_TYPE</b>.
+     * For cipher type <b>WOLFSSL_AEAD_TYPE</b>.
      *
      * @return  the size in bytes of the aead mac size upon success,
      *          <b><code>BAD_FUNC_ARG</code></b> for an error state.
@@ -1334,9 +1334,9 @@ public class WolfSSLSession {
     /**
      * Allows the caller to determine the negotiated (h)mac size from the
      * handshake.
-     * For cipher types except <b>CYASSL_AEAD_TYPE</b>.
+     * For cipher types except <b>WOLFSSL_AEAD_TYPE</b>.
      *
-     * @return  the size in bytes of the (h)mac size upon success, 
+     * @return  the size in bytes of the (h)mac size upon success,
      *          <b><code>BAD_FUNC_ARG</code></b> for an error state.
      * @see     #getBulkCipher()
      * @see     #getHmacType()
@@ -1348,7 +1348,7 @@ public class WolfSSLSession {
     /**
      * Allows caller to determine the negotiated (h)mac type from the
      * handshake.
-     * For cipher types except <b>CYASSL_AEAD_TYPE</b>.
+     * For cipher types except <b>WOLFSSL_AEAD_TYPE</b>.
      *
      * @return  If successful, the call will return one of the following:<p>
      *          WolfSSL.MD5<br>
@@ -1371,9 +1371,9 @@ public class WolfSSLSession {
      * handshake.
      *
      * @return  If successful, the call will return one of the following:<p>
-     *          WolfSSL.CYASSL_BLOCK_TYPE<br>
-     *          WolfSSL.CYASSL_STREAM_TYPE<br>
-     *          WolfSSL.CYASSL_AEAD_TYPE<br><br>
+     *          WolfSSL.WOLFSSL_BLOCK_TYPE<br>
+     *          WolfSSL.WOLFSSL_STREAM_TYPE<br>
+     *          WolfSSL.WOLFSSL_AEAD_TYPE<br><br>
      *          <b><code>BAD_FUNC_ARG</code></b> will be returned for an
      *          error state.
      * @see     #getBulkCipher()
@@ -1389,7 +1389,7 @@ public class WolfSSLSession {
      * getHmacSize() bytes. The size of the message is specified by <b>sz</b>,
      * <b>content</b> is the type of message, and <b>verify</b> specifies
      * whether this is a verification of a peer message. Valid for cipher
-     * types excluding <b>CYASSL_AEAD_TYPE</b>.
+     * types excluding <b>WOLFSSL_AEAD_TYPE</b>.
      *
      * @param   inner    inner HMAC vector to set
      * @param   sz       size of the message, in bytes
@@ -1405,7 +1405,7 @@ public class WolfSSLSession {
             int verify) {
         return setTlsHmacInner(getSessionPtr(), inner, sz, content, verify);
     }
-    
+
     /**
      * Allows caller to set the Atomic Record Processing Mac/Encrypt
      * Callback Context.
@@ -1418,7 +1418,7 @@ public class WolfSSLSession {
         macEncryptCtx = ctx;
         setMacEncryptCtx(getSessionPtr());
     }
-    
+
     /**
      * Allows caller to set the Atomic User Record Processing Decrypt/Verify
      * Callback Context.

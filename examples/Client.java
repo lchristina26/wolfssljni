@@ -1,15 +1,15 @@
 /* Client.java
  *
- * Copyright (C) 2006-2014 wolfSSL Inc.
+ * Copyright (C) 2006-2015 wolfSSL Inc.
  *
- * This file is part of CyaSSL.
+ * This file is part of wolfSSL.
  *
- * CyaSSL is free software; you can redistribute it and/or modify
+ * wolfSSL is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  *
- * CyaSSL is distributed in the hope that it will be useful,
+ * wolfSSL is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -34,7 +34,7 @@ import com.wolfssl.WolfSSLIOSendCallback;
 import com.wolfssl.WolfSSLIORecvCallback;
 
 public class Client {
-    
+
     public static Charset charset = Charset.forName("UTF-8");
     public static CharsetEncoder encoder = charset.newEncoder();
 
@@ -74,7 +74,7 @@ public class Client {
         String caCert     = "../certs/ca-cert.pem";
         String crlPemDir  = "../certs/crl";
 
-        /* server (peer) info */ 
+        /* server (peer) info */
         String host = "localhost";
         int port    =  11111;
 
@@ -103,7 +103,7 @@ public class Client {
                 if (sslVersion < 0 || sslVersion > 3) {
                     printUsage();
                 }
-    
+
             } else if (arg.equals("-l")) {
                 if (args.length < i+2)
                     printUsage();
@@ -142,7 +142,7 @@ public class Client {
 
             } else if (arg.equals("-logtest")) {
                 logCallback = 1;
-            
+
             } else if (arg.equals("-o")) {
                 useOcsp = 1;
 
@@ -172,7 +172,7 @@ public class Client {
         }
 
         try {
-            
+
             /* load JNI library */
             WolfSSL.loadLibrary();
 
@@ -250,11 +250,11 @@ public class Client {
             /* set OCSP options, override URL */
             if (useOcsp == 1) {
 
-                long ocspOptions = WolfSSL.CYASSL_OCSP_NO_NONCE;
+                long ocspOptions = WolfSSL.WOLFSSL_OCSP_NO_NONCE;
 
                 if (ocspUrl != null) {
                     ocspOptions = ocspOptions |
-                                  WolfSSL.CYASSL_OCSP_URL_OVERRIDE;
+                                  WolfSSL.WOLFSSL_OCSP_URL_OVERRIDE;
                 }
 
                 if (ocspUrl != null) {
@@ -277,16 +277,16 @@ public class Client {
             if (benchmark != 0) {
                 int times = benchmark;
                 int i = 0;
-                
+
                 long start = System.nanoTime();
                 long avg;
-                
 
-                for (i = 0; i < times; i++) {                   
+
+                for (i = 0; i < times; i++) {
                     sock = new Socket(host, port);
-                   /* System.out.println("Connected to " + 
-                            sock.getInetAddress().getHostAddress() + 
-                            " on port " + 
+                   /* System.out.println("Connected to " +
+                            sock.getInetAddress().getHostAddress() +
+                            " on port " +
                             sock.getPort() + "\n"); */
 
                     outstream = new DataOutputStream(sock.getOutputStream());
@@ -304,7 +304,7 @@ public class Client {
                 avg = System.nanoTime() - start;
                 avg /= times;
                 avg /= 1000000; /*milliseconds*/
-                System.out.println("CyaSSL_connect avg took: " + avg + 
+                System.out.println("wolfSSL_connect avg took: " + avg +
                         " milliseconds");
 
                 sslCtx.free();
@@ -314,7 +314,7 @@ public class Client {
             ssl = new WolfSSLSession(sslCtx);
 
             /* enable/load CRL functionality */
-            ret = ssl.enableCRL(WolfSSL.CYASSL_CRL_CHECKALL);
+            ret = ssl.enableCRL(WolfSSL.WOLFSSL_CRL_CHECKALL);
             if (ret != WolfSSL.SSL_SUCCESS) {
                 System.out.println("failed to enable CRL check");
                 System.exit(1);
@@ -344,9 +344,9 @@ public class Client {
                 }
             } else {
                 sock = new Socket(host, port);
-                System.out.println("Connected to " + 
-                        sock.getInetAddress().getHostAddress() + 
-                        " on port " + 
+                System.out.println("Connected to " +
+                        sock.getInetAddress().getHostAddress() +
+                        " on port " +
                         sock.getPort() + "\n");
 
                 outstream = new DataOutputStream(sock.getOutputStream());
@@ -368,7 +368,7 @@ public class Client {
             } else {
 
                 /* if not using DTLS or I/O callbacks, pass Socket
-                 * fd to CyaSSL */
+                 * fd to wolfSSL */
                 ret = ssl.setFd(sock);
 
                 if (ret != WolfSSL.SSL_SUCCESS) {
@@ -421,12 +421,12 @@ public class Client {
                 ssl.setRsaDecCtx(rsaDecCtx);
             }
 
-            /* call CyaSSL_connect */
+            /* call wolfSSL_connect */
             ret = ssl.connect();
             if (ret != WolfSSL.SSL_SUCCESS) {
                 int err = ssl.getError(ret);
                 String errString = sslLib.getErrorString(err);
-                System.out.println("CyaSSL_connect failed. err = " + err +
+                System.out.println("wolfSSL_connect failed. err = " + err +
                         ", " + errString);
                 System.exit(1);
             }

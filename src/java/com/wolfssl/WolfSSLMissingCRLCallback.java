@@ -1,15 +1,15 @@
 /* WolfSSLMissingCRLCallback.java
  *
- * Copyright (C) 2006-2014 wolfSSL Inc.
+ * Copyright (C) 2006-2015 wolfSSL Inc.
  *
- * This file is part of CyaSSL.
+ * This file is part of wolfSSL.
  *
- * CyaSSL is free software; you can redistribute it and/or modify
+ * wolfSSL is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  *
- * CyaSSL is distributed in the hope that it will be useful,
+ * wolfSSL is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -27,9 +27,9 @@ package com.wolfssl;
  * CRL callback class to be called by wolfSSL when CRL lookup fails.
  * <p>
  * After implementing this interface, it should be passed as a parameter
- * to either the {@link WolfSSLSession#setCRLCb(long, WolfSSLMissingCRLCallback) 
+ * to either the {@link WolfSSLSession#setCRLCb(long, WolfSSLMissingCRLCallback)
  * WolfSSLSession.setCRLCb()} method or {@link WolfSSLContext#setCRLCb(long,
- * WolfSSLMissingCRLCallback) WolfSSLContext.setCRLCb()} method, to be 
+ * WolfSSLMissingCRLCallback) WolfSSLContext.setCRLCb()} method, to be
  * registered with the native wolfSSL library.
  *
  * @author  wolfSSL
